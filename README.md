@@ -69,8 +69,7 @@ git push -u origin main
 
 ## Segurança
 
-Nenhuma senha ou token foi incluído nos arquivos. O teste utilizou uma conta autorizada e uma única sessão MCP/browser para reduzir consumo. A aplicação não disponibilizou recurso de criação de token.
-
+ O teste utilizou uma conta autorizada e uma única sessão MCP/browser para reduzir consumo. 
 ## Data do teste
 
 26/08/2026
