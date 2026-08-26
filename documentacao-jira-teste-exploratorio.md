@@ -268,4 +268,4 @@ Adicionar nomes acessíveis, foco visível, navegação por teclado e validaçã
 
 ## Observação sobre MCP/token
 
-Foi utilizada uma única sessão MCP/browser para reduzir consumo. Não foi criado token de autenticação, pois a aplicação não disponibiliza esse recurso e a geração de credenciais estaria fora do escopo do teste.
+Foi utilizada uma única sessão MCP/browser para reduzir consumo.
