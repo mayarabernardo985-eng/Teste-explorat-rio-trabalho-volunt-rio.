@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Relatorio de teste exploratorio - Trilhas do Conhecimento</title>
+  <style>
+    @page { size: A4; margin: 18mm 16mm; }
+    :root { --ink: #17202a; --muted: #5b6773; --line: #d8dee5; --brand: #1647b8; --critical: #9b1c1c; --high: #b54708; --medium: #8a6100; --low: #3f5f78; }
+    * { box-sizing: border-box; }
+    body { color: var(--ink); font: 10.5pt/1.48 Arial, sans-serif; margin: 0; }
+    h1 { color: var(--brand); font-size: 25pt; line-height: 1.1; margin: 0 0 8px; }
+    h2 { border-bottom: 2px solid var(--brand); color: var(--brand); font-size: 15pt; margin: 24px 0 10px; padding-bottom: 4px; }
+    h3 { font-size: 11.5pt; margin: 15px 0 4px; }
+    p { margin: 6px 0; }
+    ul { margin: 5px 0 10px 20px; padding: 0; }
+    .cover { border-left: 7px solid var(--brand); margin: 34mm 0 18mm; padding: 4px 0 4px 18px; }
+    .subtitle { color: var(--muted); font-size: 13pt; }
+    .meta { border-top: 1px solid var(--line); color: var(--muted); margin-top: 26px; padding-top: 12px; }
+    .callout { background: #f3f6fa; border: 1px solid var(--line); border-left: 4px solid var(--brand); margin: 12px 0; padding: 10px 12px; }
+    .finding { border: 1px solid var(--line); border-left: 5px solid var(--low); margin: 12px 0; padding: 9px 12px; page-break-inside: avoid; }
+    .finding.critical { border-left-color: var(--critical); }
+    .finding.high { border-left-color: var(--high); }
+    .finding.medium { border-left-color: var(--medium); }
+    .finding.low { border-left-color: var(--low); }
+    .severity { font-weight: bold; letter-spacing: .3px; text-transform: uppercase; }
+    .critical .severity { color: var(--critical); }
+    .high .severity { color: var(--high); }
+    .medium .severity { color: var(--medium); }
+    .low .severity { color: var(--low); }
+    .label { font-weight: bold; }
+    code { background: #f1f3f5; border-radius: 3px; font-family: Consolas, monospace; padding: 1px 3px; }
+    table { border-collapse: collapse; margin: 8px 0 14px; width: 100%; }
+    th, td { border: 1px solid var(--line); padding: 7px 8px; text-align: left; vertical-align: top; }
+    th { background: #edf2fb; color: #183b7a; }
+    .footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 8.5pt; margin-top: 28px; padding-top: 8px; }
+  </style>
+</head>
+<body>
+  <section class="cover">
+    <h1>Teste exploratório</h1>
+    <div class="subtitle">Trilhas do Conhecimento</div>
+    <div class="meta">
+      <p><strong>Aplicação:</strong> https://trilha-de-conhecimento.netlify.app/</p>
+      <p><strong>Data:</strong> 26 de agosto de 2026</p>
+      <p><strong>Tipo:</strong> exploração manual com automação MCP/browser</p>
+      <p><strong>Conta:</strong> usuário de teste autorizado, credenciais omitidas</p>
+    </div>
+  </section>
+
+  <h2>1. Objetivo e escopo</h2>
+  <p>Avaliar os principais fluxos públicos e autenticados da plataforma: login, navegação por trilhas, inscrição, área do estudante, favoritos, busca, logout, navegação de menus, certificado e comportamento responsivo.</p>
+  <div class="callout"><strong>Resultado geral:</strong> o fluxo básico de login, inscrição e favorito funcionou, mas foi encontrada uma falha crítica de autorização após logout, além de falhas de navegação, progresso, busca, conteúdo e responsividade.</div>
+
+  <h2>2. Evidências e dados do teste</h2>
+  <ul>
+    <li>Login realizado com sucesso e redirecionamento para a página inicial autenticada.</li>
+    <li>Inscrição na trilha UX/UI Design exibiu confirmação e criou item em “Minhas Trilhas”.</li>
+    <li>Um conteúdo foi favoritado e apareceu em “Meus Favoritos”.</li>
+    <li>Busca por “Figma” manteve os 12 conteúdos visíveis.</li>
+    <li>Após logout, a rota protegida continuou exibindo dados da estudante.</li>
+    <li>Em viewport de 708 px, o documento apresentou 947 px de largura, gerando overflow horizontal.</li>
+  </ul>
+
+  <h2>3. Bugs por severidade</h2>
+  <div class="finding critical">
+    <div class="severity">Crítico - B-01: acesso indevido após logout</div>
+    <p><span class="label">Passos:</span> autenticar; acessar “Minhas Trilhas”; clicar em “Sair”; abrir novamente <code>/student/.../my-list</code>.</p>
+    <p><span class="label">Resultado:</span> o cabeçalho mostra “Login”, porém o nome completo da estudante e sua trilha continuam renderizados.</p>
+    <p><span class="label">Impacto:</span> exposição de dados pessoais e ausência de proteção efetiva de rota.</p>
+    <p><span class="label">Recomendação:</span> validar autenticação no carregamento e em cada rota protegida; limpar sessão; redirecionar para login e impedir renderização de dados em estado inválido.</p>
+  </div>
+
+  <div class="finding high">
+    <div class="severity">Alta - B-02: menu Comunidade sem ação</div>
+    <p>O item aparece como clicável, mas não altera a URL nem exibe uma página ou mensagem.</p>
+    <p><span class="label">Recomendação:</span> conectar o item a uma rota funcional ou remover o estado clicável até a funcionalidade existir.</p>
+  </div>
+  <div class="finding high">
+    <div class="severity">Alta - B-03: ações do rodapé sem navegação</div>
+    <p>“Sobre os criadores”, “Emitir Certificado”, “Fale com a gente”, “Quero voluntariar” e “Quero mentorar” não executam ação observável.</p>
+    <p><span class="label">Recomendação:</span> usar links reais com destinos válidos e cobrir cada destino com teste de navegação.</p>
+  </div>
+  <div class="finding high">
+    <div class="severity">Alta - B-04: progresso não é atualizado</div>
+    <p>Depois de abrir a trilha, o status permanece “Não Iniciado” e não há controle evidente para concluir conteúdos.</p>
+    <p><span class="label">Recomendação:</span> definir regra de progresso, oferecer ação de conclusão e persistir o estado por usuário.</p>
+  </div>
+
+  <div class="finding medium">
+    <div class="severity">Média - B-05: busca sem filtragem</div>
+    <p>Ao pesquisar “Figma”, conteúdos não relacionados continuam visíveis e não há estado de resultados.</p>
+    <p><span class="label">Recomendação:</span> filtrar por título, etapa e descrição; tratar busca vazia e nenhum resultado.</p>
+  </div>
+  <div class="finding medium">
+    <div class="severity">Média - B-06: certificado indisponível</div>
+    <p>A opção “Emitir Certificado” é apresentada, mas não leva a um fluxo funcional.</p>
+  </div>
+  <div class="finding medium">
+    <div class="severity">Média - B-07: conteúdo incompleto e descrições genéricas</div>
+    <p>A trilha UX/UI contém itens “Nome do Tópico” e descrições repetidas que não explicam a etapa.</p>
+  </div>
+
+  <div class="finding low">
+    <div class="severity">Baixa - B-08: overflow horizontal</div>
+    <p>Em tela estreita, a largura do conteúdo supera o viewport, criando barra horizontal e cortando parte do layout.</p>
+  </div>
+  <div class="finding low">
+    <div class="severity">Baixa - B-09: erros de texto e título duplicado</div>
+    <p>Foram observados “Metiodos”, “materais”, “Algorítmos”, “HTM CSS” e “Trilha de Trilha de UX/UI Design”.</p>
+  </div>
+  <div class="finding low">
+    <div class="severity">Baixa - B-10: semântica e acessibilidade insuficientes</div>
+    <p>Ícones de favorito não possuem nome acessível; menus e ações usam elementos genéricos clicáveis em vez de links e botões semânticos.</p>
+  </div>
+
+  <h2>4. Melhorias prioritárias</h2>
+  <table>
+    <tr><th>Prioridade</th><th>Ação</th><th>Benefício</th></tr>
+    <tr><td>1</td><td>Corrigir proteção de sessão e rotas.</td><td>Evita exposição de dados e acesso indevido.</td></tr>
+    <tr><td>2</td><td>Implementar progresso persistente e certificado.</td><td>Entrega o objetivo central da jornada de estudante.</td></tr>
+    <tr><td>3</td><td>Corrigir menus, rodapé e busca.</td><td>Elimina dead ends e melhora a descoberta de conteúdo.</td></tr>
+    <tr><td>4</td><td>Revisar conteúdo, responsividade e acessibilidade.</td><td>Aumenta clareza, alcance e qualidade percebida.</td></tr>
+    <tr><td>5</td><td>Adicionar testes automatizados de login, logout, autorização, busca, favoritos e navegação.</td><td>Previne regressões nos fluxos essenciais.</td></tr>
+  </table>
+
+  <h2>5. Observação sobre token</h2>
+  <p>Foi utilizada uma única sessão MCP/browser para reduzir consumo. Não foi criado token de autenticação: a aplicação não disponibiliza esse recurso e gerar credenciais seria uma alteração de segurança fora do escopo do teste.</p>
+  <div class="footer">Documento gerado a partir de teste exploratório manual. Os achados devem ser reproduzidos em ambiente controlado antes da correção.</div>
+</body>
+</html>
